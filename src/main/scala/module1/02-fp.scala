@@ -165,8 +165,13 @@ object hof{
       case Option.None => Option.None
     }
 
-    def flatMap[B](f: A => Option[B]): Option[B] = ???
-
+    def flatMap[B](f: A => Option[B]): Option[B] = this match {
+      case Option.Some(v) => f(v) match {
+        case Option.Some(vv) => Option.Some(vv)
+        case Option.None => Option.None
+      }
+      case Option.None => Option.None
+    }
     // val i : Option[Int]  i.map(v => v + 1)
 
 
@@ -187,6 +192,10 @@ object hof{
    *
    * Реализовать метод printIfAny, который будет печатать значение, если оно есть
    */
+  def printIfAny[A](a: Option[A]): Unit = a match {
+    case Option.Some(v) => println(v)
+    case Option.None => ()
+  }
 
   /**
    *
@@ -209,12 +218,18 @@ object hof{
    *
    * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
    */
-
+  def zip[A, B](a: Option[A], b: Option[B]): Option[(A, B)] = (a, b) match {
+    case (Option.Some(aa), Option.Some(bb)) => Option.Some((aa, bb))
+    case _ => Option.None
+  }
 
   /**
    *
    * Реализовать метод filter, который будет возвращать не пустой Option
    * в случае если исходный не пуст и предикат от значения = true
    */
-
+  def filter[A](p: A => Boolean, a: Option[A]): Option[A] = a match {
+    case Option.Some(v) if (p(v)) => Option.Some(v)
+    case _ => Option.None
+  }
  }
