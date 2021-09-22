@@ -70,9 +70,9 @@ package object zio_homework {
    */
   def doWhile[R, E, A](body: ZIO[R, E, A])(condition: A => Boolean): ZIO[R, E, A] =
     for {
-      guess <- body
-      answer <- if (!condition(guess)) { doWhile(body)(condition) } else {ZIO.succeed(guess)}
-    } yield answer
+      possible_result <- body
+      result <- if (!condition(possible_result)) { doWhile(body)(condition) } else {ZIO.succeed(possible_result)}
+    } yield result
 
   /**
    * 3. Реализовать метод, который безопасно прочитает конфиг из файла, а в случае ошибки вернет дефолтный конфиг
