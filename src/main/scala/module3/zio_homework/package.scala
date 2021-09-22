@@ -27,13 +27,17 @@ package object zio_homework {
    * и печатать в когнсоль угадал или нет.
    */
 
+  def toInt[R, E, A](value: String): ZIO[R, Throwable, Int] = {
+    Task.effect(value.toInt)
+  }
+
   lazy val guessProgram: ZIO[Console with Random, Throwable, Unit] =
     for {
       r <- nextIntBetween(1, 4)
 
       _ <- putStr("Введите число от 1 до 3: ")
       s <- getStrLn
-      n = s.toInt
+      n <- toInt(s)
 
       _ <- if (n == r) {
         putStrLn("Вы угадали!")
