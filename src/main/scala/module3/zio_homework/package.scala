@@ -31,23 +31,39 @@ package object zio_homework {
     Task.effect(value.toInt)
   }
 
+  def right: ZIO[Console with Random, Throwable, Unit] = for {
+    _ <- putStrLn("Вы угадали!")
+  } yield ()
+
+  def wrong(answer: Int): ZIO[Console with Random, Throwable, Unit] = for {
+    _ <- putStrLn("Вы НЕ угадали.")
+    _ <- putStr("Правильный ответ: ")
+    _ <- putStrLn(answer.toString)
+  } yield ()
+
+  def checkGuess(guess: Int, answer: Int): ZIO[Console with Random, Throwable, Unit] = for {
+    _ <- if (guess == answer) {
+      right
+    } else {
+      wrong(answer)
+    }
+  } yield ()
+
   lazy val guessProgram: ZIO[Console with Random, Throwable, Unit] =
     for {
       r <- nextIntBetween(1, 4)
 
       _ <- putStr("Введите число от 1 до 3: ")
       s <- getStrLn
+
       n <- toInt(s)
 
-      _ <- if (n == r) {
-        putStrLn("Вы угадали!")
-      } else {
-        putStrLn("Вы НЕ угадали.")
-        putStr("Правильный ответ: ")
-        putStrLn(r.toString)
-      }
+      _ <- checkGuess(n, r)
     } yield ()
 
+  lazy val guessProgramWithNumberCheck: ZIO[Console with Random, Throwable, Unit] = guessProgram.catchSome {
+    case _ : NumberFormatException => putStrLn("Вы ввели не число!")
+  }
 
   /**
    * 2. реализовать функцию doWhile, которая будет выполнять эффект до тех пор, пока его значение в условии не даст true
